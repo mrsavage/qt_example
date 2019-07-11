@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 import sys
 import urllib.request
@@ -7,6 +8,9 @@ from PySide2.QtWidgets import (QApplication, QLabel, QPushButton,
                                QVBoxLayout, QWidget)
 from PySide2.QtCore import Slot, Qt
 
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 
 def get_armda_expenses():
     expenses = [
@@ -51,8 +55,21 @@ class MyWidget(QWidget):
         self.num_expenses = len(self.expenses)
         self.current_expense = -1
 
+        ##plotting
+        # a figure instance to plot on
+        self.figure = Figure()
 
-        self.button = QPushButton("next")
+        # this is the Canvas Widget that displays the `figure`
+        # it takes the `figure` instance as a parameter to __init__
+        self.canvas = FigureCanvas(self.figure)
+
+        # this is the Navigation widget
+        # it takes the Canvas widget and a parent
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        ##end plotting
+
+        self.plot_button = QPushButton("plot")
+        self.next_button = QPushButton("next")
         self.text = QLabel("Armada Expenses")
         self.text.setAlignment(Qt.AlignCenter)
 
@@ -66,19 +83,42 @@ class MyWidget(QWidget):
         self.image.setAlignment(Qt.AlignCenter)
 
         self.layout = QVBoxLayout()
+        self.layout.addWidget(self.toolbar)
+        self.layout.addWidget(self.canvas)
         self.layout.addWidget(self.text)
         self.layout.addWidget(self.text1)
         self.layout.addWidget(self.text2)
         self.layout.addWidget(self.text3)
         self.layout.addWidget(self.image)
-        self.layout.addWidget(self.button)
+        self.layout.addWidget(self.plot_button)
+        self.layout.addWidget(self.next_button)
         self.setLayout(self.layout)
 
         # Connecting the signal
-        self.button.clicked.connect(self.magic)
+        self.plot_button.clicked.connect(self.plot)
+        self.next_button.clicked.connect(self.next)
+
 
     @Slot()
-    def magic(self):
+    def plot(self):
+        ''' plot some random stuff '''
+        # random data
+        data = [random.random() for i in range(10)]
+
+        # create an axis
+        ax = self.figure.add_subplot(111)
+
+        # discards the old graph
+        ax.clear()
+
+        # plot data
+        ax.plot(data, '*-')
+
+        # refresh canvas
+        self.canvas.draw()
+
+    @Slot()
+    def next(self):
         if self.current_expense < self.num_expenses -1:
             self.current_expense += 1
         else:
