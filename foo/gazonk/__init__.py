@@ -52,15 +52,24 @@ class MyWidget(QWidget):
         self.current_expense = -1
 
 
-        self.button = QPushButton("Click me!")
-        self.text = QLabel("Hello World")
+        self.button = QPushButton("next")
+        self.text = QLabel("Armada Expenses")
         self.text.setAlignment(Qt.AlignCenter)
 
+        self.text1 = QLabel("")
+        self.text1.setAlignment(Qt.AlignCenter)
+        self.text2 = QLabel("")
+        self.text2.setAlignment(Qt.AlignCenter)
+        self.text3 = QLabel("")
+        self.text3.setAlignment(Qt.AlignCenter)
         self.image = QLabel()
         self.image.setAlignment(Qt.AlignCenter)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.text)
+        self.layout.addWidget(self.text1)
+        self.layout.addWidget(self.text2)
+        self.layout.addWidget(self.text3)
         self.layout.addWidget(self.image)
         self.layout.addWidget(self.button)
         self.setLayout(self.layout)
@@ -76,7 +85,10 @@ class MyWidget(QWidget):
             self.current_expense = 0
         expense = self.expenses[self.current_expense]
         expense.prepare_rendering()
-        self.text.setText(expense.title)
+        display_date = "{0:%Y-%m-%d}".format(expense.date)
+        self.text1.setText(display_date)
+        self.text2.setText(expense.title)
+        self.text3.setText("{} Euro".format(expense.price))
         self.image.setPixmap(expense.image)
 
 
