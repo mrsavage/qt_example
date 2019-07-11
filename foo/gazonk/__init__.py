@@ -102,8 +102,7 @@ class MyWidget(QWidget):
     @Slot()
     def plot(self):
         ''' plot some random stuff '''
-        # random data
-        data = [random.random() for i in range(10)]
+        data = [i.price for i in self.expenses]
 
         # create an axis
         ax = self.figure.add_subplot(111)
